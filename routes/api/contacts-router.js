@@ -1,28 +1,25 @@
 import express from "express";
+import contactsController from "../../controllers/contacts-controller.js";
+import contactsSchemas from "../../schemas/contacts-schemas.js";
+import { validateBody } from "../../decorators/index.js";
+import { isEmptyBody } from "../../middlewars/index.js";
 
-import contactsService from "../../models/contacts.js";
 
-const contactsRouter = express.Router()
 
-contactsRouter.get('/', async (req, res, next) => {
-  const result = await contactsService.listContacts();
-  res.json(result)
-})
+const contactsRouter = express.Router();
 
-contactsRouter.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
 
-contactsRouter.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
 
-contactsRouter.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+contactsRouter.get("/", contactsController.listContacts);
 
-contactsRouter.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+contactsRouter.get("/:id", contactsController.getById);
+
+contactsRouter.post("/", isEmptyBody, validateBody(contactsSchemas.contactsAddSchema),
+contactsController.addContact);
+
+contactsRouter.put("/:id", isEmptyBody, validateBody(contactsSchemas.contactsAddSchema),
+contactsController.updateContact);
+
+contactsRouter.delete("/:id", contactsController.removeContact);
 
 export default contactsRouter;
