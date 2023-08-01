@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import app from "./app.js";
-//password-WoysUeuQntcC3knY;login-Serhii---MongoDB
+
 
 dotenv.config();
 
