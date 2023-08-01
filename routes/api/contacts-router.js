@@ -12,14 +12,14 @@ const contactsRouter = express.Router();
 
 contactsRouter.get("/", contactsController.listContacts);
 
-contactsRouter.get("/:id", contactsController.getById);
+// contactsRouter.get("/:id", contactsController.getById);
 
-contactsRouter.post("/", isEmptyBody, validateBody(contactsSchemas.contactsAddSchema),
-contactsController.addContact);
+// contactsRouter.post("/", isEmptyBody, validateBody(contactsSchemas.contactsAddSchema),
+// contactsController.addContact);
 
-contactsRouter.put("/:id", isEmptyBody, validateBody(contactsSchemas.contactsAddSchema),
-contactsController.updateContact);
+// contactsRouter.put("/:id", isEmptyBody, validateBody(contactsSchemas.contactsAddSchema),
+// contactsController.updateContact);
 
-contactsRouter.delete("/:id", contactsController.removeContact);
+// contactsRouter.delete("/:id", contactsController.removeContact);
 
 export default contactsRouter;
