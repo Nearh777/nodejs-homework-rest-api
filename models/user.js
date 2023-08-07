@@ -12,13 +12,20 @@ const userSchema = new Schema({
         type: String,
         unique: true,
         match: emailRegexp,
-        required: true,
+        required: [true, 'Email is required'],
     },
     password: {
         type: String,
-        minlenth: 7,
-        required: true,
-    }
+        required: [true, 'Set password for user'],
+      },
+      subscription: {
+        type: String,
+        enum: ["starter", "pro", "business"],
+        default: "starter"
+      },
+      token: {
+        type: String,
+      }
 }, { versionKey: false, timestamps: true });
 
 
