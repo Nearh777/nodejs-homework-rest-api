@@ -8,57 +8,61 @@ import jwt from "jsonwebtoken";
 const {JWT_SECRET} = process.env;
 
 const signup = async(req, res) => {
-    const {email, password} = req.body;
-    const user = User.findOne({email});
-    if (user) {
-        throw HttpError(409, "Email in use");
-    }
+  
+  const {email, password} = req.body;
+  const user = await User.findOne({email});
+  if(user) {
+      throw HttpError(409, "Email in use");
+  }
     
-    const hashPassword = await bcrypt.hash(password, 10);
+  const hashPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({...req.body, password: hashPassword});
+  const newUser = await User.create({...req.body, password: hashPassword});
 
     res.status(201).json({
-    name: newUser.name,
-    email: newUser.email,
-  });
+        name: newUser.name,
+        email: newUser.email,
+    })
 };
 
 
 const signin = async(req, res) => {
   const {email, password} = req.body;
-  const user = await User.findOne({email})
+  const user = await User.findOne({email});
   if(!user) {
-    throw HttpError(401, "Email or password is wrong");
+      throw HttpError(401, "Email or password is wrong");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
-  if(!passwordCompare) {
-    throw HttpError(401, "Email or password is wrong");
+    if(!passwordCompare) {
+        throw HttpError(401, "Email or password invalid");
+    }
+
+    const payload = {
+      id: user._id,
   }
 
-  const payload = {
-    id: user._id,
-  }
+  const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "23h"});
+    await User.findByIdAndUpdate(user._id, {token});
 
-  const token = jwt.sign(payload, JWT_SECRET, {expressIn: "23h"});
-  await User.findByIdAndUpdate(user._id, {token});
   res.json({
-    token,
+        token,
+    })
+}
+
+const getCurrent = (req, res)=> {
+  const {name, email} = req.user;
+
+  res.json({
+      name,
+      email,
   })
 }
 
-const getCurrent = (req, res) => {
-const {name, email} = req.user;
-res.json({
-  name,
-  email,
-})
-}
-
-const signout = async(req, res) => {
-const{_id} = req.user;
-await User.findByIdAndUpdate(_id, {token: ""});
+const signout = async(req, res)=> {
+  const {_id} = req.user;
+  await User.findByIdAndUpdate(_id, {token: ""});
+  
 res.json({
   message: "Not authorized",
 })

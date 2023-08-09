@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { hendleSaveError, validateAtUpdate } from "./hooks.js";
+import { handleSaveError, validateAtUpdate } from "./hooks.js";
 import { emailRegexp } from "../constants/user-constants.js";
 
 
@@ -16,6 +16,7 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
+        minlenth: 7,
         required: [true, 'Set password for user'],
       },
       subscription: {
@@ -31,8 +32,8 @@ const userSchema = new Schema({
 
 
 userSchema.pre("findOneAndUpdate", validateAtUpdate);
-userSchema.post("save", hendleSaveError);
-userSchema.post("findOneAndUpdate", hendleSaveError);
+userSchema.post("save", handleSaveError);
+userSchema.post("findOneAndUpdate", handleSaveError);
 
 const User = model("user", userSchema);
 

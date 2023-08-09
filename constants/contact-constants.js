@@ -1,1 +1,1 @@
-export const phoneRegexp = /^\+\d{2}\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
+export const phoneRegexp = /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/;
