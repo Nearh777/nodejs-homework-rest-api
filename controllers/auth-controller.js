@@ -20,8 +20,11 @@ const signup = async(req, res) => {
   const newUser = await User.create({...req.body, password: hashPassword});
 
     res.status(201).json({
-        name: newUser.name,
+        user: {
+          // name: newUser.name,
         email: newUser.email,
+        subscription: newUser.subscription,
+        }
     })
 };
 
@@ -40,6 +43,7 @@ const signin = async(req, res) => {
 
     const payload = {
       id: user._id,
+      
   }
 
   const token = jwt.sign(payload, JWT_SECRET, {expiresIn: "23h"});
@@ -47,15 +51,22 @@ const signin = async(req, res) => {
 
   res.json({
         token,
+         user: {
+          // name: newUser.name,
+        email: user.email,
+        subscription: user.subscription,
+        }
     })
 }
 
 const getCurrent = (req, res)=> {
-  const {name, email} = req.user;
+  const {name, email, subscription} = req.user;
 
   res.json({
-      name,
-      email,
+    // name,
+    email,
+    subscription,
+     
   })
 }
 
@@ -63,9 +74,8 @@ const signout = async(req, res)=> {
   const {_id} = req.user;
   await User.findByIdAndUpdate(_id, {token: ""});
   
-res.json({
-  message: "Not authorized",
-})
+  // { message: "Not authorized",}
+res.status(204).json()
 }
 
 export default {
