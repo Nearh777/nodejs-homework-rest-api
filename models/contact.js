@@ -1,7 +1,7 @@
 // import { string } from "joi";
 import {Schema, model} from "mongoose";
 import {phoneRegexp} from "../constants/contact-constants.js";
-import { hendleSaveError, validateAtUpdate } from "./hooks.js";
+import { handleSaveError, validateAtUpdate } from "./hooks.js";
 
 const contactSchema = new Schema({
     name: {
@@ -13,7 +13,7 @@ const contactSchema = new Schema({
         required: true,
     },
     phone: {
-        type: Number,
+        type: String,
         required: true,
     },    
     favorite: {
@@ -22,11 +22,16 @@ const contactSchema = new Schema({
         default: false,
         
     },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
+      }
 }, {versionKey: false, timestamps: true});
 
 contactSchema.pre("findOneAndUpdate", validateAtUpdate);
-contactSchema.post("save", hendleSaveError);
-contactSchema.post("findOneAndUpdate", hendleSaveError);
+contactSchema.post("save", handleSaveError);
+contactSchema.post("findOneAndUpdate", handleSaveError);
 
 
 const Contact = model("contact", contactSchema);
