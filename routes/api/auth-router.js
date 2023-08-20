@@ -14,7 +14,7 @@ authRouter.get("/current", authenticate, authController.getCurrent);
 
 authRouter.post("/logout", authenticate, authController.signout);
 
-// authRouter.patch('/', authenticate, validateBody(updateBySubscriptionSchema), updateBySubscription);
+// authRouter.patch('/', authenticate, validateBody(usersSchemas.updateBySubscriptionSchema), authController.updateBySubscription);
 authRouter.patch('/avatars', authenticate, upload.single('avatars'), authController.updateByAvatar);
 
 

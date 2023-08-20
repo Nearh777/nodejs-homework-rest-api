@@ -13,7 +13,7 @@ const userSigninSchema = Joi.object({
 });
 
 const updateBySubscriptionSchema = Joi.object({
-  subscription: Joi.string().valid("starter", "pro", "business").required()
+  subscription: Joi.string().valid("starter", "pro", "business"),
 });
 
 
