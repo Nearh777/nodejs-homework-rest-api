@@ -1,11 +1,17 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import path from "path";
 import { ctrlWrapper } from "../decorators/index.js";
 import { HttpError } from "../helpers/index.js";
+import gravatar from "gravatar";
 import jwt from "jsonwebtoken";
+import Jimp from "jimp";
 
 
 const {JWT_SECRET} = process.env;
+
+const avatarPath = path.resolve("public", "avatars");
+
 
 const signup = async(req, res) => {
   
@@ -16,14 +22,16 @@ const signup = async(req, res) => {
   }
     
   const hashPassword = await bcrypt.hash(password, 10);
+  const urlAvatar = gravatar.url(email);
 
-  const newUser = await User.create({...req.body, password: hashPassword});
+  const newUser = await User.create({...req.body, email, password: hashPassword, subscription, avatarURL: urlAvatar });
 
     res.status(201).json({
         user: {
           // name: newUser.name,
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL,
         }
     })
 };
@@ -78,9 +86,35 @@ const signout = async(req, res)=> {
 res.status(204).json()
 }
 
+const updateByAvatar = async(req, res, next) => {
+  const { _id } = req.user;
+   const {path: oldPath, filename} = req.file;
+    const newPath = path.join(avatarPath, filename);
+    await fs.rename(oldPath, newPath);
+    const avatar = path.join("avatars", filename);
+
+    const image = await Jimp.read(oldPath);
+        await image.resize(250, 250)
+             .writeAsync(oldPath);
+             await fs.rename(oldPath, avatar);
+        const avatarURL = path.join('avatars', filename);
+        const user = await User.findByIdAndUpdate(_id, { avatarURL });
+         if (!user) {
+            throw RequestError(401, "Not authorized");
+        }
+
+        res.json({
+            avatarURL: user.avatarURL,
+        })
+
+   
+
+} 
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   signout: ctrlWrapper(signout),
+  updateByAvatar: ctrlWrapper(updateByAvatar),
 };
